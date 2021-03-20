@@ -1,6 +1,7 @@
 /**
  * @name CustomEmojis
  * @version 1.0.0
+ * @description Allows you to send any emoji anywhere as an image link.
  */
 
 /*
@@ -43,7 +44,7 @@ module.exports = (() => {
 				github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
 			}],
 			version: "1.0.0",
-			description: "Allows you to send custom emojis."
+			description: "Allows you to send any emoji anywhere as an image link."
 		},
 		defaultConfig: [{
 			type: "switch",
