@@ -1,0 +1,12 @@
+/**
+ * @name CustomEmojis
+ * @version 1.0.0
+ * @author TheGameratorT
+ * @description Removes round corners in images.
+**/
+
+#app-mount .embedImage-2W1cML img,
+#app-mount .embedMedia-1guQoW,
+#app-mount .exampleContainer-25sB-A {
+   border-radius: var(--borders-previews);
+}
