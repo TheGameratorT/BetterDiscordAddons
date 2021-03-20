@@ -1,9 +1,4 @@
-<h1>
-	CustomEmojis - 
-	<a href="https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js" download>
-		Download
-	</a>
-</h1>
+# CustomEmojis - [Download](https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js)
 
 Allows you to send any emoji anywhere as an image.
 
