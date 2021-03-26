@@ -38,13 +38,13 @@ module.exports = (() => {
 		info: {
 			name: "CustomEmojis",
 			authors: [{
-				name: "Tiago Silva",
-				github_username: "TheGameratorT",
-				github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
-				github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
+				name: "TheGameratorT",
+				github_username: "TheGameratorT"
 			}],
 			version: "1.0.0",
-			description: "Allows you to send any emoji anywhere as an image link."
+			description: "Allows you to send any emoji anywhere as an image link.",
+			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
+			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
 		},
 		defaultConfig: [{
 			type: "switch",
