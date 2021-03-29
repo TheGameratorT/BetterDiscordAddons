@@ -1,6 +1,6 @@
 /**
  * @name CustomEmojis
- * @version 1.0.0
+ * @version 1.0.1
  * @description Allows you to send any emoji anywhere as an image link.
  */
 
@@ -39,9 +39,10 @@ module.exports = (() => {
 			name: "CustomEmojis",
 			authors: [{
 				name: "TheGameratorT",
+				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "1.0.0",
+			version: "1.0.1",
 			description: "Allows you to send any emoji anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
@@ -52,6 +53,11 @@ module.exports = (() => {
 			name: "Prioritize Custom Emojis",
 			note: "When searching for an emoji or autocompleting, show the custom emojis first.",
 			value: false
+		}],
+		changelog: [{
+			title: "Plugin Status",
+			type: "fixed",
+			items: ["Fixed errors being thrown when opening the picker right after logging in."]
 		}],
 		main: "index.js"
 	};
@@ -276,8 +282,11 @@ module.exports = (() => {
 				const emojiComponents = retval.props.children;
 				for (var e = 0; e < emojiComponents.length; e++)
 				{
-					const emoji = emojiComponents[e].props.children.props.emoji;
-					var ecp = emojiComponents[e].props;
+					const ecp = emojiComponents[e].props.children.props;
+					if (!ecp)
+						return;
+					
+					const emoji = ecp.emoji;
 
 					const isCustom = this.isEmojiCustom(emoji);
 					if (isCustom)
