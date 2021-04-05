@@ -1,6 +1,6 @@
 /**
  * @name CustomEmojis
- * @version 1.0.1
+ * @version 1.0.2
  * @description Allows you to send any emoji anywhere as an image link.
  */
 
@@ -42,7 +42,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "1.0.1",
+			version: "1.0.2",
 			description: "Allows you to send any emoji anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
@@ -57,7 +57,7 @@ module.exports = (() => {
 		changelog: [{
 			title: "Plugin Status",
 			type: "fixed",
-			items: ["Fixed errors being thrown when opening the picker right after logging in."]
+			items: ["Fixed animated emoji stealing."]
 		}],
 		main: "index.js"
 	};
@@ -86,9 +86,11 @@ module.exports = (() => {
 
 	} : (([Plugin, Api]) => {
 
-	/* ================ CLASS START ================ */
-
 	const plugin = (Plugin, Api) => {
+
+	/* ================ MAIN CODE START ================ */
+	
+	const {Buffer} = require("buffer");
 
 	const {
 		Patcher,
@@ -98,12 +100,23 @@ module.exports = (() => {
 		DiscordAPI,
 		DiscordModules,
 		DiscordSelectors,
-		DCM,
 		Utilities,
-		Modals
+		Modals,
+		DCM
 	} = Api;
+	
+	const {
+		EmojiInfo,
+		EmojiUtils,
+		EmojiStore,
+		ImageResolver,
+		MessageActions,
+		LocaleManager
+	} = DiscordModules;
+	
+	const UserSettings = DiscordAPI.UserSettings;
 
-	const escPress = new KeyboardEvent("keydown", {key: "Escape", code: "Escape", which: 27, keyCode: 27, bubbles: true});
+	const EscPress = new KeyboardEvent("keydown", {key: "Escape", code: "Escape", which: 27, keyCode: 27, bubbles: true});
 
 	const CustomIcon = (({DiscordModules}) => {
 		const ce = DiscordModules.React.createElement;
@@ -139,14 +152,6 @@ module.exports = (() => {
 		gifsicleWarnShown: false,
 		prioritizeCustoms: false
 	};
-
-	const EmojiInfo = DiscordModules.EmojiInfo;
-	const EmojiUtils = DiscordModules.EmojiUtils;
-	const EmojiStore = DiscordModules.EmojiStore;
-	const ImageResolver = DiscordModules.ImageResolver;
-	const MessageActions = DiscordModules.MessageActions;
-	const LocaleManager = DiscordModules.LocaleManager;
-	const UserSettings = DiscordAPI.UserSettings;
 
 	return class CustomEmojis extends Plugin
 	{
@@ -307,7 +312,7 @@ module.exports = (() => {
 							slateEditor.insertText(text);
 
 							if (!event.shiftKey)
-								document.dispatchEvent(escPress);
+								document.dispatchEvent(EscPress);
 						}
 
 						ecp.onContextMenu = (event) =>
