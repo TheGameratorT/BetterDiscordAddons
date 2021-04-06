@@ -1,7 +1,12 @@
 /**
  * @name CustomEmojis
- * @version 1.0.2
+ * @version 1.0.3
  * @description Allows you to send any emoji anywhere as an image link.
+ * @author TheGameratorT
+ * @authorLink https://github.com/TheGameratorT
+ * @website https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis
+ * @source https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js
+ * @updateUrl https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js
  */
 
 /*
@@ -42,7 +47,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "1.0.2",
+			version: "1.0.3",
 			description: "Allows you to send any emoji anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
@@ -57,7 +62,7 @@ module.exports = (() => {
 		changelog: [{
 			title: "Plugin Status",
 			type: "fixed",
-			items: ["Fixed animated emoji stealing."]
+			items: ["Fixed emoji picker not working."]
 		}],
 		main: "index.js"
 	};
@@ -285,18 +290,18 @@ module.exports = (() => {
 			Patcher.after(EmojiPickerListRow, "default", (self, args, retval) =>
 			{
 				const emojiComponents = retval.props.children;
-				for (var e = 0; e < emojiComponents.length; e++)
+				for (var i = 0; i < emojiComponents.length; i++)
 				{
-					const ecp = emojiComponents[e].props.children.props;
-					if (!ecp)
+					const props = emojiComponents[i].props;
+					const child_props = props.children.props;
+					if (!child_props)
 						return;
 					
-					const emoji = ecp.emoji;
-
+					const emoji = child_props.emoji;
 					const isCustom = this.isEmojiCustom(emoji);
 					if (isCustom)
 					{
-						ecp.onClick = (event) =>
+						props.onClick = (event) =>
 						{
 							const textArea = document.querySelector(DiscordSelectors.Textarea.textArea);
 							if (!textArea)
@@ -315,7 +320,7 @@ module.exports = (() => {
 								document.dispatchEvent(EscPress);
 						}
 
-						ecp.onContextMenu = (event) =>
+						props.onContextMenu = (event) =>
 						{
 							const menu = DCM.buildMenu([{
 								type: "group",
@@ -330,7 +335,7 @@ module.exports = (() => {
 					}
 					else
 					{
-						ecp.onContextMenu = (event) =>
+						props.onContextMenu = (event) =>
 						{
 							const menu = DCM.buildMenu([{
 								type: "group",
