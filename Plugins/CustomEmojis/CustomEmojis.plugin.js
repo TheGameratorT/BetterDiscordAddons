@@ -1,6 +1,6 @@
 /**
  * @name CustomEmojis
- * @version 1.0.3
+ * @version 1.0.4
  * @description Allows you to send any emoji anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -47,7 +47,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "1.0.3",
+			version: "1.0.4",
 			description: "Allows you to send any emoji anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
@@ -60,9 +60,9 @@ module.exports = (() => {
 			value: false
 		}],
 		changelog: [{
-			title: "Plugin Status",
-			type: "fixed",
-			items: ["Fixed emoji picker not working."]
+			title: "Improved",
+			type: "improved",
+			items: ["Picking emojis from the emoji picker is now more accurate."]
 		}],
 		main: "index.js"
 	};
@@ -249,6 +249,18 @@ module.exports = (() => {
 		// Patch the emojis to display the custom image instead
 		patchEmojiPickerEmojis()
 		{
+			// Disable favorites for custom emojis
+			const EmojiMgr = WebpackModules.getModule(m => m && m.favoriteEmoji);
+			Patcher.instead(EmojiMgr, "favoriteEmoji", (self, [emoji]) => {
+				if (!this.isEmojiCustom(emoji))
+					self.favoriteEmoji.__originalFunction(emoji);
+			});
+			
+			Patcher.after(EmojiInfo, "getEmojiUnavailableReason", (self, [context]) => {
+				if (this.isEmojiCustom(context.emoji))
+					return null;
+			});
+			
 			Patcher.after(EmojiInfo, "isEmojiDisabled", (self, [emoji]) =>
 			{
 				if (this.isEmojiCustom(emoji))
@@ -301,25 +313,6 @@ module.exports = (() => {
 					const isCustom = this.isEmojiCustom(emoji);
 					if (isCustom)
 					{
-						props.onClick = (event) =>
-						{
-							const textArea = document.querySelector(DiscordSelectors.Textarea.textArea);
-							if (!textArea)
-								return;
-	
-							const slateEditor = Utilities.findInTree(textArea.__reactInternalInstance$, e => e && e.wrapText, {walkable: ["return", "stateNode", "editorRef"]});
-							if (!slateEditor)
-								return;
-							
-							var text = emoji.allNamesString;
-							if (!event.shiftKey)
-								text += " ";
-							slateEditor.insertText(text);
-
-							if (!event.shiftKey)
-								document.dispatchEvent(EscPress);
-						}
-
 						props.onContextMenu = (event) =>
 						{
 							const menu = DCM.buildMenu([{
