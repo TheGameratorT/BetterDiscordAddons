@@ -1,6 +1,6 @@
 /**
  * @name CustomEmojis
- * @version 1.0.4
+ * @version 1.0.5
  * @description Allows you to send any emoji anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -47,7 +47,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "1.0.4",
+			version: "1.0.5",
 			description: "Allows you to send any emoji anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/CustomEmojis",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/CustomEmojis/CustomEmojis.plugin.js"
@@ -60,9 +60,9 @@ module.exports = (() => {
 			value: false
 		}],
 		changelog: [{
-			title: "Improved",
-			type: "improved",
-			items: ["Picking emojis from the emoji picker is now more accurate."]
+			title: "Fixed",
+			type: "fixed",
+			items: ["Searching for emojis works again."]
 		}],
 		main: "index.js"
 	};
@@ -231,7 +231,7 @@ module.exports = (() => {
 				}
 			});
 
-			Patcher.after(EmojiUtils, "search", (self, [e, name, n, r, i], retval) =>
+			Patcher.after(EmojiUtils, "searchWithoutFetchingLatest", (self, [e, name, n, r, i], retval) =>
 			{
 				var customs = this.customEmojis.filter(e =>
 				{
