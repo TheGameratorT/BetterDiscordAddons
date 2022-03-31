@@ -1,7 +1,7 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.0
- * @description Allows you to send any emoji as an image link.
+ * @version 2.0.1
+ * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
  * @website https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic
@@ -59,8 +59,8 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "1.0.0",
-			description: "Allows you to send any emoji as an image link.",
+			version: "2.0.1",
+			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
 		},
@@ -108,9 +108,9 @@ module.exports = (() => {
 			value: false
 		}],
 		changelog: [{
-			title: "Added",
-			type: "added",
-			items: ["Added support for user defined emojis."]
+			title: "Fixed",
+			type: "fixed",
+			items: ["Fixed redundant data being saved.", "Fixed custom emoji parsing behavior after Discord update."]
 		}],
 		main: "index.js"
 	};
@@ -302,13 +302,28 @@ module.exports = (() => {
 
 		// Patch the the emoji search
 		patchEmojiSearch() {
-			const EmojiParser = WebpackModules.getModule(m => m.parse && m.parsePreprocessor && m.unparse);
-			Patcher.after(EmojiParser, "parse", (self, [, emojiStr], retval) => {
-				console.log(emojiStr);
-				if (emojiStr[2] == '.') { // is custom
-					let name = emojiStr.substring(3, emojiStr.indexOf(':', 3));
-					let customEmoji = this.getCustomEmojiByName("." + name);
-					retval.content = `<:CEMJ_${name}:${customEmoji.id}>`;
+			const EmojiAutocomplete = WebpackModules.getModule(m => m.onSelect && m.sentinel == ":");
+			Patcher.before(EmojiAutocomplete, "onSelect", (self, [e, t, n, r], retval) => {
+				var o = e.emojis
+				if (t < o.length) {
+					var emoji = o[t];
+					var name = emoji.name;
+					if (name[0] == '.') {
+						emoji = {...emoji};
+						emoji.name = "CEMJ_" + name.substr(1);
+						o[t] = emoji;
+					}
+				}
+			});
+			
+			const ChannelEditorContainer = WebpackModules.getModule(m => m.displayName && m.displayName == "ChannelEditorContainer").prototype;
+			Patcher.before(ChannelEditorContainer, "insertEmoji", (self, args, retval) => {
+				var emoji = args[0];
+				var name = emoji.name;
+				if (name[0] == '.') {
+					var emojiCopy = {...emoji};
+					emojiCopy.name = "CEMJ_" + name.substr(1);
+					args[0] = emojiCopy;
 				}
 			});
 
@@ -624,6 +639,7 @@ module.exports = (() => {
 				if (url == undefined) {
 					this.fetchAndSaveEmoji(emoji, (resUrl) => {
 						if (resUrl != null) {
+							this.setUrlForEmoji(emoji.id, resUrl);
 							onEmojiReady(emoji, resUrl, false, onSent);
 						} else { // failed, just ignore emoji
 							Toasts.error("Emoji upload failed.");
@@ -696,7 +712,6 @@ module.exports = (() => {
 							onSaved(null);
 							return;
 						}
-						this.setUrlForEmoji(emoji.id, emojiUrl);
 						onSaved(emojiUrl);
 					});
 				});
