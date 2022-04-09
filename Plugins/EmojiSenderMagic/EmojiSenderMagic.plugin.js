@@ -1,6 +1,6 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.1
+ * @version 2.0.2
  * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -59,7 +59,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "2.0.1",
+			version: "2.0.2",
 			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
@@ -110,7 +110,7 @@ module.exports = (() => {
 		changelog: [{
 			title: "Fixed",
 			type: "fixed",
-			items: ["Fixed redundant data being saved.", "Fixed custom emoji parsing behavior after Discord update."]
+			items: ["Fixed image uploading not working."]
 		}],
 		main: "index.js"
 	};
@@ -855,7 +855,15 @@ module.exports = (() => {
 			this.uploadFinishedCallback = onUploaded;
 
 			var textInfo = {content: "", invalidEmojis: [], tts: false, validNonShortcutEmojis: []};
-			this.uploader.upload(channelID, file, 0, textInfo, false, fileName);
+			var uploadInfo = {
+				channelId: channelID,
+				file: file,
+				draftType: 0,
+				message: textInfo,
+				hasSpoiler: false,
+				fileName: fileName
+			};
+			this.uploader.upload(uploadInfo);
 		}
 
 		handleUploadActionEvent(success) {
