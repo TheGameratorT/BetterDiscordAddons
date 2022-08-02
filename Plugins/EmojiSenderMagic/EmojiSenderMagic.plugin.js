@@ -1,6 +1,6 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.2
+ * @version 2.0.3
  * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -59,7 +59,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "2.0.2",
+			version: "2.0.3",
 			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
@@ -110,7 +110,7 @@ module.exports = (() => {
 		changelog: [{
 			title: "Fixed",
 			type: "fixed",
-			items: ["Fixed image uploading not working."]
+			items: ["Fixed incompatibility with latest update."]
 		}],
 		main: "index.js"
 	};
@@ -171,10 +171,6 @@ module.exports = (() => {
 		ImageResolver,
 		ContextMenuActions
 	} = DiscordModules;
-
-	const {
-		ActionTypes
-	} = DiscordConstants;
 
 	const defaultSettings = {
 		picaWarnShown: false,
@@ -238,8 +234,8 @@ module.exports = (() => {
 			this.stickerSenderBusy = false;
 			this.queuedStickers = [];
 			this.waitingForUpload = false;
-			Dispatcher.subscribe(ActionTypes.UPLOAD_COMPLETE, this.onUploadComplete);
-			Dispatcher.subscribe(ActionTypes.UPLOAD_FAIL, this.onUploadFail);
+			Dispatcher.subscribe("UPLOAD_COMPLETE", this.onUploadComplete);
+			Dispatcher.subscribe("UPLOAD_FAIL", this.onUploadFail);
 
 			this.loadPica();
 			this.loadPuppeteerLottie();
@@ -257,8 +253,8 @@ module.exports = (() => {
 		}
 
 		onStop() {
-			Dispatcher.unsubscribe(ActionTypes.CONNECTION_OPEN, this.onUploadComplete);
-			Dispatcher.unsubscribe(ActionTypes.UPLOAD_FAIL, this.onUploadFail);
+			Dispatcher.unsubscribe("UPLOAD_COMPLETE", this.onUploadComplete);
+			Dispatcher.unsubscribe("UPLOAD_FAIL", this.onUploadFail);
 			MessageActions.sendStickers = this.ogSendStickers;
 			this.stickerUse.useFilteredStickerPackCategories = this.ogUseFilteredStickerPackCategories;
 			EmojiUtils.categories = EmojiUtils.originalCategories;
@@ -468,7 +464,7 @@ module.exports = (() => {
 
 		onStickerUrlReady(url, channelID, stickerID, refInfo) {
 			this.sendStickerUrl(url, channelID, refInfo);
-			Dispatcher.dispatch({type: ActionTypes.STICKER_TRACK_USAGE, stickerIds: [stickerID]});
+			Dispatcher.dispatch({type: "STICKER_TRACK_USAGE", stickerIds: [stickerID]});
 			this.sendNextStickerInQueue();
 		}
 
@@ -563,7 +559,6 @@ module.exports = (() => {
 						return original(args).then((render) => {
 							return (props) => {
 								var ret = render(props);
-								console.log([ret, props]);
 								if (!this.hasPatchedMsgContext) {
 									doPatchMessageContextMenu();
 									this.hasPatchedMsgContext = true;
@@ -620,7 +615,7 @@ module.exports = (() => {
 			const onEmojiReady = (emoji, url, wait, onSent) => {
 				sendTextMessage(url, wait, onSent);
 				Dispatcher.dispatch({
-					type: ActionTypes.EMOJI_TRACK_USAGE,
+					type: "EMOJI_TRACK_USAGE",
 					emojiUsed: [emoji]
 				});
 			}
