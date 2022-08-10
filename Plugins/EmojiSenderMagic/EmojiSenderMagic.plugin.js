@@ -1,6 +1,6 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.3
+ * @version 2.0.4
  * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -59,7 +59,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "2.0.3",
+			version: "2.0.4",
 			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
@@ -108,9 +108,9 @@ module.exports = (() => {
 			value: false
 		}],
 		changelog: [{
-			title: "Fixed",
-			type: "fixed",
-			items: ["Fixed incompatibility with latest update."]
+			title: "Added",
+			type: "added",
+			items: ["Added some missing translation entries."]
 		}],
 		main: "index.js"
 	};
@@ -161,7 +161,6 @@ module.exports = (() => {
 		EmojiUtils,
 		EmojiStore,
 		MessageActions,
-		DiscordConstants,
 		Dispatcher,
 		MessageStore,
 		ChannelStore,
@@ -1129,16 +1128,16 @@ module.exports = (() => {
 		showToast(id) {
 			if (!this.settings.enableToasts) { return; }
 			if (id == 4) {
-				Toasts.info("Converting native sticker...");
-				Toasts.info("This will take around 15 seconds.");
+				Toasts.info(this.labels.convNSticker);
+				Toasts.info(this.labels.take15secs);
 				return;
 			}
 			var msg;
 			switch (id) {
-				case 0: { msg = "Converting emoji..."; break; }
-				case 1: { msg = "Uploading emoji..."; break; }
-				case 2: { msg = "Converting sticker..."; break; }
-				case 3: { msg = "Uploading sticker..."; break; }
+				case 0: { msg = this.labels.convEmoji; break; }
+				case 1: { msg = this.labels.upEmoji; break; }
+				case 2: { msg = this.labels.convSticker; break; }
+				case 3: { msg = this.labels.upSticker; break; }
 			}
 			Toasts.info(msg);
 		}
@@ -1149,37 +1148,73 @@ module.exports = (() => {
 					category: "Custom emojis",
 					link: "Add emoji",
 					unlink: "Remove emoji",
-					steal: "Steal emoji"
+					steal: "Steal emoji",
+					convNSticker: "Converting native sticker...",
+					take15secs: "This will take around 15 seconds.",
+					convEmoji: "Converting emoji...",
+					upEmoji: "Uploading emoji...",
+					convSticker: "Converting sticker...",
+					upSticker: "Uploading sticker..."
 				}
 				case "de": return {
 					category: "Benutzerdefinierte emojis",
 					link: "Emoji hinzufügen",
 					unlink: "Emoji entfernen",
-					steal: "Emoji stehlen"
+					steal: "Emoji stehlen",
+					convNSticker: "Nativer Sticker wird konvertiert",
+					take15secs: "Dies dauert ungefähr 15 Sekunden.",
+					convEmoji: "Emoji wird konvertiert...",
+					upEmoji: "Emoji wird hochgeladen...",
+					convSticker: "Sticker wird konvertiert...",
+					upSticker: "Sticker wird hochgeladen..."
 				}
 				case "es-ES": return {
 					category: "Emojis personalizados",
 					link: "Agregar emoji",
 					unlink: "Eliminar emoji",
-					steal: "Robar emoji"
+					steal: "Robar emoji",
+					convNSticker: "Convirtiendo pegatina nativa...",
+					take15secs: "Esto tomará alrededor de 15 segundos.",
+					convEmoji: "Convirtiendo emoji...",
+					upEmoji: "Subiendo emoji...",
+					convSticker: "Convirtiendo pegatina...",
+					upSticker: "Subiendo pegatina..."
 				}
 				case "it": return {
 					category: "Emoji personalizzate",
 					link: "Aggiungi emoji",
 					unlink: "Rimuovi emoji",
-					steal: "Ruba emoji"
+					steal: "Ruba emoji",
+					convNSticker: "Convertendo adesivo nativo...",
+					take15secs: "Ci vorranno circa 15 secondi.",
+					convEmoji: "Convertendo emoji...",
+					upEmoji: "Caricando emoji...",
+					convSticker: "Convertendo adesivo...",
+					upSticker: "Caricando adesivo..."
 				}
 				case "nl": return {
 					category: "Aangepaste emoji's",
 					link: "Emoji toevoegen",
 					unlink: "Verwijder Emoji",
-					steal: "Steel Emoji"
+					steal: "Steel Emoji",
+					convNSticker: "Native sticker converteren...",
+					take15secs: "Dit duurt ongeveer 15 seconden.",
+					convEmoji: "Emoji converteren...",
+					upEmoji: "Emoji uploaden...",
+					convSticker: "Sticker omzetten...",
+					upSticker: "Sticker uploaden..."
 				}
 				case "pt-BR": return {
 					category: "Emojis personalizados",
 					link: "Adicionar emoji",
 					unlink: "Remover emoji",
-					steal: "Roubar emoji"
+					steal: "Roubar emoji",
+					convNSticker: "Convertendo figurinha nativa...",
+					take15secs: "Isto vai demorar cerca de 15 segundos.",
+					convEmoji: "Convertendo emoji...",
+					upEmoji: "Carregando emoji...",
+					convSticker: "Convertendo figurinha...",
+					upSticker: "Carregando figurinha..."
 				}
 			}
 		}
