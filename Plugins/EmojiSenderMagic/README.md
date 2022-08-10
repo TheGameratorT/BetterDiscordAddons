@@ -1,4 +1,4 @@
-# EmojiSenderMagic - [Download](https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js)
+# EmojiSenderMagic - [Download](https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js)
 
 Allows you to send any emoji or sticker anywhere as an image link.
 
