@@ -19,4 +19,4 @@ Animated stickers always require a channel because they must be converted from A
  - **FFmpeg** - (at least essential build) - Optional but required if using puppeteer-lottie or if converting animated stickers or emojis.
  - **Chromium** - Required if using puppeteer-lottie, the new Microsoft Edge or Google Chrome work as valid Chromium installations.
 
-Note: When installing `puppeteer-lottie` if you have Edge in your system already it is of no use installing Chromium on NodeJS, to avoid Chromium being installed on NodeJS use `set PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false` before running the install command.
+Note: When installing `puppeteer-lottie` if you have Edge in your system already it is of no use installing Chromium on NodeJS, to avoid Chromium being installed on NodeJS use `set PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true` before running the install command.
