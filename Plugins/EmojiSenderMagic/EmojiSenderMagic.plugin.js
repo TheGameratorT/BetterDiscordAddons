@@ -1,6 +1,6 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.4
+ * @version 2.0.5
  * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -59,7 +59,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "2.0.4",
+			version: "2.0.5",
 			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
@@ -108,9 +108,9 @@ module.exports = (() => {
 			value: false
 		}],
 		changelog: [{
-			title: "Added",
-			type: "added",
-			items: ["Added some missing translation entries."]
+			title: "Fixed",
+			type: "fixed",
+			items: ["Fixed user locale retrieval which caused the plugin to not work.", "Fixed custom emoji autocomplete."]
 		}],
 		main: "index.js"
 	};
@@ -165,7 +165,6 @@ module.exports = (() => {
 		MessageStore,
 		ChannelStore,
 		UserStore,
-		UserSettingsStore,
 		LocaleManager,
 		ImageResolver,
 		ContextMenuActions
@@ -298,8 +297,9 @@ module.exports = (() => {
 		// Patch the the emoji search
 		patchEmojiSearch() {
 			const EmojiAutocomplete = WebpackModules.getModule(m => m.onSelect && m.sentinel == ":");
-			Patcher.before(EmojiAutocomplete, "onSelect", (self, [e, t, n, r], retval) => {
-				var o = e.emojis
+			Patcher.before(EmojiAutocomplete, "onSelect", (self, [args], retval) => {
+				var t = args.index;
+				var o = args.results.emojis;
 				if (t < o.length) {
 					var emoji = o[t];
 					var name = emoji.name;
@@ -1143,7 +1143,7 @@ module.exports = (() => {
 		}
 
 		loadLabels() {
-			switch (UserSettingsStore.locale) {
+			switch (LocaleManager.getLocale()) {
 				default: return {
 					category: "Custom emojis",
 					link: "Add emoji",
