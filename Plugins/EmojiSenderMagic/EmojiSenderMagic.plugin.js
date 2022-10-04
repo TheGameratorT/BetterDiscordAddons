@@ -1,6 +1,6 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.5
+ * @version 2.0.6
  * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -59,7 +59,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "2.0.5",
+			version: "2.0.6",
 			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
@@ -110,7 +110,7 @@ module.exports = (() => {
 		changelog: [{
 			title: "Fixed",
 			type: "fixed",
-			items: ["Fixed user locale retrieval which caused the plugin to not work.", "Fixed custom emoji autocomplete."]
+			items: ["Temporary attempt at getting code to minimally work, a lot of features broke."]
 		}],
 		main: "index.js"
 	};
@@ -185,7 +185,8 @@ module.exports = (() => {
 	const EMOJI_RE = /<(a?):([^(:| )]*):(\d*)>/g;
 
 	const fs = require('fs');
-	const { exec } = require("child_process");
+	//const { exec } = require("child_process");
+	const exec = (a, b) => { Toasts.error("EmojiSenderMagic: Broken operation, sorry :("); b(true, 0, 0); };
 
 	const CustomEmojiCategoryIcon = (({DiscordModules}) => {
 		const ce = DiscordModules.React.createElement;
@@ -224,10 +225,9 @@ module.exports = (() => {
 
 			this.uploader = WebpackModules.getByProps(["instantBatchUpload"]);
 			this.stickerStore = WebpackModules.getByProps(["getStickerById"]);
-			this.stickerInfo = WebpackModules.getByProps(["getStickerAssetUrl"]);
-			this.stickerPerms = WebpackModules.getByProps(["getStickerSendability"]);
-			this.stickerUse = WebpackModules.getByProps(["useStickerPackCategories"]);
-			this.expressionPicker = WebpackModules.getByProps(["closeExpressionPicker"]);
+			//this.stickerInfo = WebpackModules.getByProps(["getStickerAssetUrl"]); // faulty
+			//this.stickerPerms = WebpackModules.getByProps(["getStickerSendability"]); // faulty
+			//this.stickerUse = WebpackModules.getByProps(["useStickerPackCategories"]); // faulty
 			this.useFakeIsSendableSticker = true;
 			this.stickerSenderBusy = false;
 			this.queuedStickers = [];
@@ -254,7 +254,7 @@ module.exports = (() => {
 			Dispatcher.unsubscribe("UPLOAD_COMPLETE", this.onUploadComplete);
 			Dispatcher.unsubscribe("UPLOAD_FAIL", this.onUploadFail);
 			MessageActions.sendStickers = this.ogSendStickers;
-			this.stickerUse.useFilteredStickerPackCategories = this.ogUseFilteredStickerPackCategories;
+			//this.stickerUse.useFilteredStickerPackCategories = this.ogUseFilteredStickerPackCategories;
 			EmojiUtils.categories = EmojiUtils.originalCategories;
 			Patcher.unpatchAll();
 		}
@@ -311,7 +311,7 @@ module.exports = (() => {
 				}
 			});
 			
-			const ChannelEditorContainer = WebpackModules.getModule(m => m.displayName && m.displayName == "ChannelEditorContainer").prototype;
+			/*const ChannelEditorContainer = WebpackModules.getModule(m => m.displayName && m.displayName == "ChannelEditorContainer").prototype;
 			Patcher.before(ChannelEditorContainer, "insertEmoji", (self, args, retval) => {
 				var emoji = args[0];
 				var name = emoji.name;
@@ -320,7 +320,7 @@ module.exports = (() => {
 					emojiCopy.name = "CEMJ_" + name.substr(1);
 					args[0] = emojiCopy;
 				}
-			});
+			});*/
 
 			Patcher.after(EmojiUtils, "searchWithoutFetchingLatest", (self, [e, name, n, r, i], retval) => {
 				var customs = this.customEmojis.filter(e => {
@@ -381,17 +381,17 @@ module.exports = (() => {
 			});
 
 			// Give the fake categories an icon
-			const EmojiCategoryIcon = WebpackModules.getModule(m => m.default && m.default.type && m.default.type.toString().includes("FOOD"));
+			/*const EmojiCategoryIcon = WebpackModules.getModule(m => m.default && m.default.type && m.default.type.toString().includes("FOOD"));
 			Patcher.after(EmojiCategoryIcon.default, "type", (self, [props]) => {
 				if (props.categoryId == this.labels.category) {
 					return DiscordModules.React.createElement(CustomEmojiCategoryIcon, props);
 				}
-			});
+			});*/
 		}
 
 		// Patch the stickers
 		patchStickers() {
-			Patcher.after(this.stickerPerms, "isSendableSticker", (self, args, retval) => {
+			/*Patcher.after(this.stickerPerms, "isSendableSticker", (self, args, retval) => {
 				if (this.useFakeIsSendableSticker) {
 					return true;
 				}
@@ -405,7 +405,7 @@ module.exports = (() => {
 				let ret = this.ogUseFilteredStickerPackCategories(e);
 				B.isPremium = ogIsPremium;
 				return ret;
-			}
+			}*/
 
 			this.ogSendStickers = MessageActions.sendStickers;
 			MessageActions.sendStickers = (channelID, stickerIDs, c, d, e) => {
@@ -455,10 +455,10 @@ module.exports = (() => {
 		}
 
 		hasPermToSendSticker(sticker, channelID) {
-			this.useFakeIsSendableSticker = false;
+			/*this.useFakeIsSendableSticker = false;
 			let ret = this.stickerPerms.isSendableSticker(sticker, UserStore.getCurrentUser(), ChannelStore.getChannel(channelID));
 			this.useFakeIsSendableSticker = true;
-			return ret;
+			return ret;*/return true;
 		}
 
 		onStickerUrlReady(url, channelID, stickerID, refInfo) {
@@ -693,6 +693,10 @@ module.exports = (() => {
 
 		fetchAndSaveEmoji(emoji, onSaved) {
 			var onImageMade = (data) => {
+				if (data == null) {
+					onSaved(null);
+					return;
+				}
 				this.showToast(1);
 				var ext = emoji.animated ? "gif" : "png";
 				var channel = this.settings.emojiStoreChannelID;
@@ -797,6 +801,10 @@ module.exports = (() => {
 
 		fetchAndSaveSticker(sticker, onSaved) {
 			var onImageMade = (data, ext) => {
+				if (data == null) {
+					onSaved(null);
+					return;
+				}
 				var channel = this.settings.stickerStoreChannelID;
 				this.showToast(3);
 				this.uploadImageData(sticker.name, data, ext, channel, (success) => {
@@ -815,7 +823,9 @@ module.exports = (() => {
 				});
 			}
 
-			var url = this.optimizeContentUrl(this.stickerInfo.getStickerAssetUrl(sticker), this.pica == null ? 160 : 4096);
+			Toasts.error("EmojiSenderMagic: Broken operation, sorry :(");
+			onSaved(null);
+			/*var url = this.optimizeContentUrl(this.stickerInfo.getStickerAssetUrl(sticker), this.pica == null ? 160 : 4096);
 			var format = sticker.format_type;
 			if (format != 3) {
 				this.showToast(2);
@@ -828,7 +838,7 @@ module.exports = (() => {
 			else {
 				this.showToast(4);
 				this.makeGifImgFromLottie(url, 160, 160, (data) => onImageMade(data, "gif"));
-			}
+			}*/
 		}
 
 		optimizeContentUrl(url, size) {
