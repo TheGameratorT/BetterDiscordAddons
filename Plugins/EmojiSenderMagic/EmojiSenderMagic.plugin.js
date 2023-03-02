@@ -1,6 +1,6 @@
 /**
  * @name EmojiSenderMagic
- * @version 2.0.6
+ * @version 2.0.7
  * @description Allows you to send any emoji or sticker anywhere as an image link.
  * @author TheGameratorT
  * @authorLink https://github.com/TheGameratorT
@@ -59,7 +59,7 @@ module.exports = (() => {
 				discord_id: "355434532893360138",
 				github_username: "TheGameratorT"
 			}],
-			version: "2.0.6",
+			version: "2.0.7",
 			description: "Allows you to send any emoji or sticker anywhere as an image link.",
 			github: "https://github.com/TheGameratorT/BetterDiscordAddons/tree/master/Plugins/EmojiSenderMagic",
 			github_raw: "https://raw.githubusercontent.com/TheGameratorT/BetterDiscordAddons/master/Plugins/EmojiSenderMagic/EmojiSenderMagic.plugin.js"
@@ -110,7 +110,7 @@ module.exports = (() => {
 		changelog: [{
 			title: "Fixed",
 			type: "fixed",
-			items: ["Temporary attempt at getting code to minimally work, a lot of features broke."]
+			items: ["Fix custom emojis not autocompleting."]
 		}],
 		main: "index.js"
 	};
@@ -322,10 +322,10 @@ module.exports = (() => {
 				}
 			});*/
 
-			Patcher.after(EmojiUtils, "searchWithoutFetchingLatest", (self, [e, name, n, r, i], retval) => {
+			Patcher.after(EmojiUtils, "searchWithoutFetchingLatest", (self, [{ channel, query, count, intention, matchComparator }], retval) => {
 				var customs = this.customEmojis.filter(e => {
-					var lname = e.name.toLowerCase();
-					return lname.startsWith(name) || lname.startsWith("." + name);
+				var lname = e.name.toLowerCase();
+					return lname.startsWith(query) || lname.startsWith("." + query);
 				});
 	
 				if (this.settings.prioritizeCustoms)
